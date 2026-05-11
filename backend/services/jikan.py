@@ -1,3 +1,7 @@
+'''
+Jikan API logic
+'''
+
 import httpx
 
 JIKAN_BASE_URL = "https://api.jikan.moe/v4"

@@ -1,3 +1,7 @@
+'''
+GPT logic 
+'''
+
 import os
 import json
 from openai import AsyncOpenAI
@@ -81,6 +85,6 @@ async def extract_search_params(query: str):
     result = response.choices[0].message.content
 
     try:
-        return json.loads(result)
+        return json.loads(result) # converts json string into Python dict
     except:
         raise Exception("GPT returned invalid JSON")

@@ -1,3 +1,8 @@
+'''
+Department of the application
+Everything anime search related
+'''
+
 from fastapi import APIRouter, HTTPException
 from services import jikan
 
