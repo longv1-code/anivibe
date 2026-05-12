@@ -9,7 +9,17 @@ from dotenv import load_dotenv
 load_dotenv() # loads .env 
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from routes import anime
 
 app = FastAPI() # creates FastAPI app instance
+
+# allows port 5173 to call FastAPI port 8000
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(anime.router) # registers anime.py as a router
