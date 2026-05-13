@@ -8,11 +8,12 @@ const App = () => {
   const [searchQuery, setSearchQuery] = useState("") // state to save query
   const [results, setResults] = useState([]) // state to save results
   const [isLoading, setIsLoading] = useState(false) // state to load if waiting for results
+  const [filters, setFilters] = useState({}) // state to save Gemini filters
 
   const handleSearch = async (query) => {
     try {
       setIsLoading(true)
-      console.log("user searched for: ", query)
+      console.log("user searched for:", query)
       const response = await axios.post("http://localhost:8000/anime/search", { // call POST request on /anime/search to run function search_anime in anime.py
         prompt: query
       })
