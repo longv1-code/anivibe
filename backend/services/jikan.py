@@ -53,14 +53,16 @@ GENRE_MAP = {
     "Erotica" : 49,
 }
 
-async def search_anime(query: str, genres: str = None, min_score: float = None, type: str = None, status: str = None, min_episodes: int = None, order_by: str = "popularity", sort: str = "desc"):
-    params = {"q": query, "limit": 20, "min_score": min_score, "order_by": order_by, "sort": sort}
+async def search_anime(query: str = None, genres: list = None, min_score: float = None, type: str = None, status: str = None, min_episodes: int = None, order_by: str = "popularity", sort: str = "asc"):
+    params = {"limit": 21, "min_score": min_score, "order_by": order_by, "sort": sort}
 
     # filters
+    if query:
+        params["q"] = query
     if genres:
-        genre_id = GENRE_MAP.get(genres.title(), None)
-        if genre_id:
-            params["genres"] = genre_id
+        genre_ids = [str(GENRE_MAP.get(g.title())) for g in genres if GENRE_MAP.get(g.title())]
+        if genre_ids:
+            params["genres"] = ",".join(genre_ids)
     if type:
         params["type"] = type
     if status:
@@ -69,7 +71,7 @@ async def search_anime(query: str, genres: str = None, min_score: float = None, 
         params["min_episodes"] = min_episodes
     if min_score:
         params["min_score"] = min_score
-
+    print("JIKAN PARAMS:", params)
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(f"{JIKAN_BASE_URL}/anime", params=params)
