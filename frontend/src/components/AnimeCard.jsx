@@ -12,10 +12,10 @@ const AnimeCard = ( {title, score, mal_url, type, episodes, status, genres, imag
       </div>
       <div>
         <div>
-            {type}
-            {episodes}
-            {score}
-            {status}
+            <span>{type}</span>
+            <span>{episodes}</span>
+            <span>{score}</span>
+            <span>{status}</span>
         </div>
         <div>
             {synopsis}

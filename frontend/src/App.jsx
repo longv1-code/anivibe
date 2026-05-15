@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useState } from 'react'
 import AnimeGrid from './components/AnimeGrid'
 import FilterPanel from './components/FilterPanel'
+import { Button } from '@mui/material'
 
 const App = () => {
   // states for re-rendering
@@ -10,6 +11,7 @@ const App = () => {
   const [results, setResults] = useState([]) // state to save results
   const [isLoading, setIsLoading] = useState(false) // state to load if waiting for results
   const [filters, setFilters] = useState({}) // state to save Gemini filters
+  const [showFilters, setShowFilters] = useState(false)
 
   const handleSearch = async (query) => {
     try {
@@ -37,7 +39,7 @@ const App = () => {
     try {
       setIsLoading(true)
       const response = await axios.post("http://localhost:8000/anime/filter", {
-        filters: filters
+        filters: {...filters, query: searchQuery }
       })
       setResults(response.data.results)
       setFilters(response.data.params)
@@ -54,10 +56,25 @@ const App = () => {
   // tip: to render an element with an if-condition, use && operator 
   return (
     <div>
-      <SearchBar onSearch={handleSearch} /> 
+      <SearchBar 
+        onSearch={handleSearch} 
+        query={searchQuery}
+        setQuery={setSearchQuery}  
+      /> 
+      
+      <Button onClick={() => setShowFilters(prev => !prev)}>
+        {showFilters ? "Hide Filters" : "Show Filters"}
+      </Button>
+      {showFilters && 
+        <FilterPanel 
+          filters={filters} 
+          onFilterChange={handleFilterChange} 
+          onApplyFilters={handleApplyFilters}
+        />
+      }
+
       {isLoading && <p>Loading...</p>} 
-      {results.length > 0 ? (<AnimeGrid results={results} />) : (<p>No anime can be found, try a different prompt or filter!</p>)}
-      {Object.keys(filters).length > 0 && <FilterPanel filters={filters} onFilterChange={handleFilterChange} onApplyFilters={handleApplyFilters}/>}
+      {results.length > 0 && (<AnimeGrid results={results} />)}
     </div>
   )
 }
