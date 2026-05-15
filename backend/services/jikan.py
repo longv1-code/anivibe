@@ -54,7 +54,7 @@ GENRE_MAP = {
 }
 
 async def search_anime(query: str = None, genres: list = None, min_score: float = None, type: str = None, status: str = None, min_episodes: int = None, order_by: str = "popularity", sort: str = "asc"):
-    params = {"limit": 21, "min_score": min_score, "order_by": order_by, "sort": sort}
+    params = {"limit": 20, "order_by": order_by, "sort": sort}
 
     # filters
     if query:
