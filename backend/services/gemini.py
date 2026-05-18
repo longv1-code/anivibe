@@ -276,6 +276,21 @@ async def extract_search_params(query: str):
             =========================
 
             input:
+            ""
+
+            output:
+            {
+            "query": null,
+            "genres": null,
+            "min_score": 0.0,
+            "type": "tv",
+            "status": "complete",
+            "min_episodes": 1,
+            "order_by": "score",
+            "sort": "desc"
+            }
+
+            input:
             "i want a dark psychological anime with mind games"
 
             output:
