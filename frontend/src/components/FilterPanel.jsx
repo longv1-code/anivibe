@@ -81,8 +81,9 @@ const sort_by = {
 
 const FilterPanel = ( {filters, onFilterChange, onApplyFilters} ) => {
   return (
-    <div>
-      <FormControl>
+    <>
+    <div className='grid grid-cols-4 gap-4 mb-4'>
+      <FormControl fullWidth size='small'>
         <InputLabel>Genre</InputLabel>
         <Select
             value={filters.genres?.[0] || ""}
@@ -100,7 +101,7 @@ const FilterPanel = ( {filters, onFilterChange, onApplyFilters} ) => {
         </Select>
       </FormControl>
 
-      <FormControl>
+      <FormControl fullWidth size='small'>
         <InputLabel>Types</InputLabel>
         <Select
             value={filters.type || ""}
@@ -118,7 +119,7 @@ const FilterPanel = ( {filters, onFilterChange, onApplyFilters} ) => {
         </Select>
       </FormControl>
 
-      <FormControl>
+      <FormControl fullWidth size='small'>
         <InputLabel>Status</InputLabel>
         <Select
             value={filters.status || ""}
@@ -136,7 +137,7 @@ const FilterPanel = ( {filters, onFilterChange, onApplyFilters} ) => {
         </Select>
       </FormControl>
 
-      <FormControl>
+      <FormControl fullWidth size='small'>
         <InputLabel>Order By</InputLabel>
         <Select
             value={filters.order_by || ""}
@@ -153,7 +154,9 @@ const FilterPanel = ( {filters, onFilterChange, onApplyFilters} ) => {
             ))}
         </Select>
       </FormControl>
+    </div>
 
+    <div className="grid grid-cols-3 gap-4 mb-4 items-center">
       <FormControl>
         <FormLabel>Sort By</FormLabel>
         <RadioGroup
@@ -191,12 +194,14 @@ const FilterPanel = ( {filters, onFilterChange, onApplyFilters} ) => {
       >
 
       </TextField>
-
+    </div>
+    
+    <div className="flex justify-end">
       <Button variant='contained' onClick={onApplyFilters}>
         Apply Filters
       </Button>
-
     </div>
+    </>
   )
 }
 
