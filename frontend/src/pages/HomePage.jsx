@@ -23,7 +23,7 @@ const HomePage = ( { user } ) => {
       setIsLoading(true)
       console.log("user searched for:", query)
       setSearchQuery(query)
-      const response = await axios.post("http://localhost:8000/anime/search", { // call POST request on /anime/search to run function search_anime in anime.py
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/anime/search`, { // call POST request on /anime/search to run function search_anime in anime.py
         prompt: query
       })
       setResults(response.data.results) // response is axios object, .data has the array of anime
@@ -43,7 +43,7 @@ const HomePage = ( { user } ) => {
   const handleApplyFilters = async () => { // function for Apply Filters button
     try {
       setIsLoading(true)
-      const response = await axios.post("http://localhost:8000/anime/filter", {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/anime/filter`, { // call POST request on /anime/filter to run function filter_anime in anime.py
           filters: {
               ...filters
           }
