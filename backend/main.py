@@ -17,7 +17,7 @@ app = FastAPI() # creates FastAPI app instance
 # allows port 5173 to call FastAPI port 8000
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "https://anivibe-neon.vercel.app/"],
+    allow_origins=["http://localhost:5173", "https://anivibe-neon.vercel.app"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
