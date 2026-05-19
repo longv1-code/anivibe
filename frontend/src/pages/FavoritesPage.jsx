@@ -27,9 +27,8 @@ const FavoritesPage = ( { user } ) => {
 
   const handleFavoriteChange = (malUrl, isFavorited) => {
     if (!isFavorited) {
-      const removedIndex = favorites.findIndex(f => f.mal_url == malUrl)
-      const removed = favorites[removedIndex]
-      setUndoAnime({...removed, index: removedIndex}) // save it in case user wants to undo
+      const removed = favorites.find(f => f.mal_url === malUrl)
+      setUndoAnime(removed) // save it in case user wants to undo
       setFavorites(prev => prev.filter(f => f.mal_url !== malUrl))
       setSnackbarOpen(true)
     }
@@ -38,11 +37,7 @@ const FavoritesPage = ( { user } ) => {
   const handleUndo = async () => {
     if (undoAnime) {
       await addFavorite(user.id, undoAnime)
-      setFavorites(prev => {
-        const newFavorites = [...prev]
-        newFavorites.splice(undoAnime.index, 0, undoAnime) // insert at original position
-        return newFavorites
-      })
+      setFavorites(prev => [...prev, undoAnime])
       setUndoAnime(null)
       setSnackbarOpen(false)
     }
