@@ -71,7 +71,6 @@ async def search_anime(query: str = None, genres: list = None, min_score: float 
         params["min_episodes"] = min_episodes
     if min_score:
         params["min_score"] = min_score
-    print("JIKAN PARAMS:", params)
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(f"{JIKAN_BASE_URL}/anime", params=params)
