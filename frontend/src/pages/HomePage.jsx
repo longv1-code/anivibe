@@ -4,19 +4,19 @@ import { useState, useEffect } from 'react'
 import AnimeGrid from '../components/AnimeGrid'
 import FilterPanel from '../components/FilterPanel'
 import { Button } from '@mui/material'
-import supabase from '../supabase'
-import Auth from '../components/Auth'
-import { useNavigate } from 'react-router-dom'
+import { getFavorites } from '../services/favorites'
+import { getProfile } from '../services/profile'
+import Navbar from '../components/Navbar'
 
-const Home = () => {
+const HomePage = ( { user } ) => {
   // states for re-rendering
   const [searchQuery, setSearchQuery] = useState("") // state to save query
   const [results, setResults] = useState([]) // state to save results
   const [isLoading, setIsLoading] = useState(false) // state to load if waiting for results
   const [filters, setFilters] = useState({}) // state to save Gemini filters
   const [showFilters, setShowFilters] = useState(false)
-  const [user, setUser] = useState(null)
-  const [showAuth, setShowAuth] = useState(false)
+  const [favorites, setFavorites] = useState([])
+  const [profile, setProfile] = useState(null)
   
   const handleSearch = async (query) => {
     try {
@@ -58,23 +58,14 @@ const Home = () => {
   }
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-    })
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut()
-  }
-
-  const navigate = useNavigate()
-  const handleSignIn = () => navigate('/auth')
+    if (user) {
+      getFavorites(user.id).then(data => setFavorites(data || []))
+      getProfile(user.id).then(data => setProfile(data))
+    } else {
+      setFavorites([])
+      setProfile(null)
+    }
+  }, [user])
 
   // SearchBar function shows the search bar feature
   // loading message is only true if isLoading, clever use of &&
@@ -83,21 +74,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-bg-primary">
       {/* Navbar */}
-      <nav className="border-b border-border-subtle px-8 py-4 flex justify-between items-center">
-        <h1 className="font-display text-2xl font-bold text-accent-blue tracking-tight">
-          ANIVIBE
-        </h1>
-        {user ? (
-          <div>
-            <p>{user.email}</p>
-            <Button onClick={handleSignOut}>Sign Out</Button>
-          </div>
-          ) : (
-          <Button onClick={() => navigate('/signin')}>Sign In</Button>
-          )}
-      </nav>
-
-      {showAuth && !user && <Auth />}
+      <Navbar user={user} profile={profile}/>
 
       {/* Hero Search Section */}
       <div className="relative max-w-3xl mx-auto px-8 pt-24 pb-12 text-center">
@@ -140,10 +117,10 @@ const Home = () => {
       {/* Results */}
       <div className="max-w-7xl mx-auto px-8 pb-16">
         {isLoading && <p className="text-text-muted text-center py-16">Searching...</p>}
-        {!isLoading && results.length > 0 && <AnimeGrid results={results} />}
+        {!isLoading && results.length > 0 && <AnimeGrid results={results} user={user} favorites={favorites} />}
       </div>
     </div>
   )
 }
 
-export default Home
+export default HomePage

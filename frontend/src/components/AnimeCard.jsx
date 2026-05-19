@@ -1,6 +1,43 @@
 import styles from './AnimeCard.module.css'
+import { useState } from 'react'
+import { addFavorite, removeFavorite } from '../services/favorites'
+import { Heart } from 'lucide-react'
+import { IconButton } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 
-const AnimeCard = ({ title, score, mal_url, type, episodes, status, genres, image, synopsis, studios }) => {
+const AnimeCard = ({ title, score, mal_url, type, episodes, status, genres, image, synopsis, studios, user, isFavorite, onFavoriteChange }) => {
+    const [favorited, setFavorited] = useState(isFavorite)
+    const navigate = useNavigate()
+
+    const handleFavorite = async (e) => {
+        e.preventDefault() // stops the card's <a> link from firing
+        if (!user) {
+            navigate('/signin')
+            return
+        }
+ 
+        if (favorited) {
+            await removeFavorite(user.id, mal_url)
+            setFavorited(false)
+            onFavoriteChange?.(mal_url, false)
+        } else {
+            await addFavorite(user.id, {
+                mal_url,
+                title,
+                image,
+                score,
+                genres,
+                synopsis,
+                studios,
+                episodes,
+                type,
+                status
+            })
+            setFavorited(true)
+            onFavoriteChange?.(mal_url, true)
+        }
+    }
+
     return (
         <a href={mal_url} target="_blank" rel="noreferrer" className={styles.card}>
             {/* Image with title overlay */}
@@ -16,10 +53,26 @@ const AnimeCard = ({ title, score, mal_url, type, episodes, status, genres, imag
 
             {/* Content below image */}
             <div className={styles.content}>
-                {/* Rating */}
-                <div className={styles.rating}>
-                    ★ {score}
-                    <span className={styles.ratingLabel}>score</span>
+                {/* Rating + Heart side by side */}
+                <div className='flex justify-between items-center'>
+                    <div className={styles.rating}>
+                        ★ {score}
+                        <span className={styles.ratingLabel}>score</span>
+                    </div>
+                    <IconButton
+                        onClick={handleFavorite}
+                        sx={{ 
+                            color: favorited ? '#f78166' : 'var(--text-muted)',
+                            '&:hover': { color: '#f78166' },
+                            padding: '4px'
+                        }}
+                    >
+                        <Heart 
+                            size={18}
+                            fill={favorited ? '#f78166' : 'none'}
+                            stroke="currentColor"
+                        />
+                    </IconButton>
                 </div>
 
                 {/* Type, Episodes, Status */}
