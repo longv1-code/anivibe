@@ -1,4 +1,3 @@
-import React from 'react'
 import { Button } from "@mui/material"
 import { useNavigate } from 'react-router-dom'
 import supabase from '../supabase'
@@ -11,7 +10,7 @@ const Navbar = ( {user, profile, minimal = false} ) => {
   const navigate = useNavigate()
   return (
     <nav className="border-b border-border-subtle px-8 py-4 flex justify-between items-center">
-        <h1 className="font-display text-2xl font-bold text-accent-blue tracking-tight cursor-pointer" onClick={() => navigate('/')}>
+        <h1 className="font-display text-2xl font-bold text-accent-blue tracking-tight cursor-pointer" onClick={() => window.location.href = '/'}>
           ANIVIBE
         </h1>
         {!minimal && (

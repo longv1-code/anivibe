@@ -2,11 +2,11 @@ import SearchBar from '../components/Searchbar'
 import axios from 'axios'
 import { useState, useEffect } from 'react'
 import AnimeGrid from '../components/AnimeGrid'
-import FilterPanel from '../components/FilterPanel'
 import { Button } from '@mui/material'
 import { getFavorites } from '../services/favorites'
 import { getProfile } from '../services/profile'
 import Navbar from '../components/Navbar'
+import FilterChips from '../components/FilterChips'
 
 const HomePage = ( { user } ) => {
   // states for re-rendering
@@ -14,13 +14,13 @@ const HomePage = ( { user } ) => {
   const [results, setResults] = useState([]) // state to save results
   const [isLoading, setIsLoading] = useState(false) // state to load if waiting for results
   const [filters, setFilters] = useState({}) // state to save Gemini filters
-  const [showFilters, setShowFilters] = useState(false)
   const [favorites, setFavorites] = useState([])
   const [profile, setProfile] = useState(null)
   
   const handleSearch = async (query) => {
     try {
       setIsLoading(true)
+      setFilters({})
       console.log("user searched for:", query)
       setSearchQuery(query)
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/anime/search`, { // call POST request on /anime/search to run function search_anime in anime.py
@@ -40,12 +40,12 @@ const HomePage = ( { user } ) => {
     setFilters(prev => ({...prev, [key]: value})) // prev contain original state before change, something React does internally with an arrow function inside setter function
   }
 
-  const handleApplyFilters = async () => { // function for Apply Filters button
+  const runFilterSearch = async ( newFilters ) => { // function for Apply Filters button
     try {
       setIsLoading(true)
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/anime/filter`, { // call POST request on /anime/filter to run function filter_anime in anime.py
           filters: {
-              ...filters
+              ...newFilters
           }
       })
       setResults(response.data.results)
@@ -55,6 +55,19 @@ const HomePage = ( { user } ) => {
       console.log("Filter failed:", e)
       setIsLoading(false)
     }
+  }
+
+  const handleChipRemove = async (key, value) => {
+    let newFilters
+    if (key === "genres") {
+        newFilters = {...filters, genres: filters.genres.filter(g => g !== value)}
+    } else if (key === "order_by") {
+        newFilters = {...filters, order_by: "popularity", sort: "asc"}
+    } else {
+        newFilters = {...filters, [key]: null}
+    }
+    setFilters(newFilters)
+    await runFilterSearch(newFilters) // pass new filters directly
   }
 
   useEffect(() => {
@@ -77,42 +90,39 @@ const HomePage = ( { user } ) => {
       <Navbar user={user} profile={profile}/>
 
       {/* Hero Search Section */}
-      <div className="relative max-w-3xl mx-auto px-8 pt-24 pb-12 text-center">
-          {/* background glow */}
-          <div className="absolute inset-0 bg-accent-blue opacity-5 blur-3xl rounded-full pointer-events-none" />
+      <div className="relative w-full overflow-hidden" style={{ height: '500px' }}>
+          {/* Background collage */}
+          <div 
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+              style={{ backgroundImage: "url('/hero-bg.png')" }}
+          />
           
-          <h1 className="font-display text-6xl font-bold text-text-primary mb-6 tracking-tight leading-tight">
-              Discover anime made<br/>
-              <span className="text-accent-blue">for you.</span>
-          </h1>
+          {/* Dark gradient overlay */}
+          <div className="absolute inset-0" style={{ background: 'rgba(13, 17, 23, 0.75)' }} />
           
-          <p className="text-text-muted text-lg mb-10 max-w-xl mx-auto leading-relaxed">
-              Describe a vibe, a mood, a plot — and we'll find exactly 
-              what you're looking for from thousands of titles.
-          </p>
-
-          <SearchBar query={searchQuery} setQuery={setSearchQuery} onSearch={handleSearch} />
+          {/* Content */}
+          <div className="relative z-10 max-w-3xl mx-auto px-8 pt-24 pb-12 text-center">
+              <h1 className="font-display text-6xl font-bold text-text-primary mb-6 tracking-tight leading-tight">
+                  Discover anime made<br/>
+                  <span className="text-accent-blue">for you.</span>
+              </h1>
+              <p className="text-text-primary text-lg mb-10 max-w-xl mx-auto leading-relaxed">
+                  Describe a vibe, a mood, a plot — and we'll find exactly 
+                  what you're looking for from thousands of titles.
+              </p>
+              <SearchBar query={searchQuery} setQuery={setSearchQuery} onSearch={handleSearch} />
+          </div>
       </div>
 
       {/* Filters */}
-      <div className="max-w-4xl mx-auto px-8 mb-8 flex flex-col items-center gap-4">
-        <Button
-            onClick={() => setShowFilters(prev => !prev)}
-            className="flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors text-sm border border-border-subtle rounded-full px-4 py-2"
-        >
-            ⚙ {showFilters ? "Hide Filters" : "Show Filters"}
-        </Button>
-
-        {showFilters &&
-            <div className="w-full bg-bg-card border border-border-subtle rounded-2xl p-6">
-                <FilterPanel
-                    filters={filters}
-                    onFilterChange={handleFilterChange}
-                    onApplyFilters={handleApplyFilters}
+      <div className="max-w-4xl mx-auto px-8 py-4">
+        {Object.keys(filters).length > 0 && (
+                <FilterChips 
+                    filters={filters} 
+                    onRemove={handleChipRemove}
                 />
-            </div>
-        }
-    </div>
+        )}
+      </div>
 
       {/* Results */}
       <div className="max-w-7xl mx-auto px-8 pb-16">
