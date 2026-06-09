@@ -1,20 +1,21 @@
 .card {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     background-color: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 12px;
     overflow: hidden;
-    transition: transform 0.2s ease, border-color 0.2s ease;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
     cursor: pointer;
     height: 100%;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.25);
 }
 
 .imageWrapper {
     position: relative;
-    width: 160px;
-    min-width: 160px;
-    height: 100%;
+    width: 100%;
+    height: 220px;
+    flex-shrink: 0;
 }
 
 .image {
@@ -22,6 +23,7 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    transition: transform 0.35s ease;
 }
 
 .imageOverlay {
@@ -29,8 +31,8 @@
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 32px 10px 10px;
-    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+    padding: 18px 10px;
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
 }
 
 .title {
@@ -57,6 +59,16 @@
     gap: 10px;
     flex: 1;
     min-width: 0;
+}
+
+/* Hover effects */
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+    border-color: rgba(88,166,255,0.12);
+}
+.card:hover .image {
+    transform: scale(1.06);
 }
 
 .rating {
@@ -115,4 +127,29 @@
     font-weight: 600;
     letter-spacing: 0.02em;
     white-space: nowrap;
+}
+
+/* Heart icon states */
+.heart {
+    transition: transform 0.18s ease, color 0.18s ease;
+}
+.heartFilled {
+    color: var(--accent-coral);
+    transform: scale(1.05);
+}
+
+/* Heart pop animation */
+@keyframes heart-pop {
+    0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(247,129,102,0)); }
+    40% { transform: scale(1.35); filter: drop-shadow(0 6px 10px rgba(247,129,102,0.18)); }
+    100% { transform: scale(1.05); filter: drop-shadow(0 6px 14px rgba(0,0,0,0.25)); }
+}
+.heartPop {
+    animation: heart-pop 360ms cubic-bezier(.2,.9,.3,1) forwards;
+}
+
+/* Responsive layout: row on large screens */
+@media (min-width: 1024px) {
+    .card { flex-direction: row; }
+    .imageWrapper { width: 180px; min-width: 180px; height: auto; }
 }

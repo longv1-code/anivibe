@@ -1,8 +1,7 @@
 import SearchBar from '../components/Searchbar'
 import axios from 'axios'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import AnimeGrid from '../components/AnimeGrid'
-import { Button } from '@mui/material'
 import { getFavorites } from '../services/favorites'
 import { getProfile } from '../services/profile'
 import Navbar from '../components/Navbar'
@@ -34,10 +33,6 @@ const HomePage = ( { user } ) => {
       setIsLoading(false)
     }
 
-  }
-
-  const handleFilterChange = (key, value) => {
-    setFilters(prev => ({...prev, [key]: value})) // prev contain original state before change, something React does internally with an arrow function inside setter function
   }
 
   const runFilterSearch = async ( newFilters ) => { // function for Apply Filters button
@@ -80,6 +75,36 @@ const HomePage = ( { user } ) => {
     }
   }, [user])
 
+  const heroRef = useRef(null)
+
+  // subtle parallax on hero background
+  useEffect(() => {
+    const el = heroRef.current
+    if (!el) return
+    const bg = el.querySelector('.hero-bg')
+    let raf = null
+    const onMove = (e) => {
+      const rect = el.getBoundingClientRect()
+      const x = ((e.clientX - rect.left) / rect.width - 0.5)
+      const y = ((e.clientY - rect.top) / rect.height - 0.5)
+      if (raf) cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        if (bg) bg.style.transform = `translate(${x * 12}px, ${y * 8}px) scale(1.06)`
+      })
+    }
+    const onLeave = () => {
+      if (raf) cancelAnimationFrame(raf)
+      if (bg) bg.style.transform = 'translate(0px, 0px) scale(1.06)'
+    }
+    el.addEventListener('mousemove', onMove)
+    el.addEventListener('mouseleave', onLeave)
+    return () => {
+      el.removeEventListener('mousemove', onMove)
+      el.removeEventListener('mouseleave', onLeave)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [])
+
   // SearchBar function shows the search bar feature
   // loading message is only true if isLoading, clever use of &&
   // results only show if there is results (uses length to check rather if object exists) and show grid of anime
@@ -90,27 +115,42 @@ const HomePage = ( { user } ) => {
       <Navbar user={user} profile={profile}/>
 
       {/* Hero Search Section */}
-      <div className="relative w-full overflow-hidden" style={{ height: '500px' }}>
-          {/* Background collage */}
-          <div 
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-              style={{ backgroundImage: "url('/hero-bg.png')" }}
-          />
-          
-          {/* Dark gradient overlay */}
-          <div className="absolute inset-0" style={{ background: 'rgba(13, 17, 23, 0.75)' }} />
+      <div className="relative w-full overflow-hidden" style={{ height: '500px' }} ref={heroRef}>
+            {/* Layered background: blurred base + vignette overlay for seamless blend */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="hero-bg" style={{ backgroundImage: "url('/hero-bg.png')" }} />
+              <div className="hero-overlay" />
+            </div>
           
           {/* Content */}
           <div className="relative z-10 max-w-3xl mx-auto px-8 pt-24 pb-12 text-center">
-              <h1 className="font-display text-6xl font-bold text-text-primary mb-6 tracking-tight leading-tight">
-                  Discover anime made<br/>
-                  <span className="text-accent-blue">for you.</span>
+              <h1 className="font-display text-5xl sm:text-6xl font-bold text-text-primary mb-4 tracking-tight leading-tight">
+                  Find your next obsession.
               </h1>
-              <p className="text-text-primary text-lg mb-10 max-w-xl mx-auto leading-relaxed">
-                  Describe a vibe, a mood, a plot — and we'll find exactly 
-                  what you're looking for from thousands of titles.
+              <p className="text-text-primary text-lg mb-6 max-w-xl mx-auto leading-relaxed">
+                  Tell us a mood, a plot twist, or a character type — we'll match you
+                  with anime that fit the vibe.
               </p>
-              <SearchBar query={searchQuery} setQuery={setSearchQuery} onSearch={handleSearch} />
+              <div className="mx-auto max-w-xl">
+                <SearchBar query={searchQuery} setQuery={setSearchQuery} onSearch={handleSearch} />
+
+                {/* Sample prompts */}
+                <div className="flex flex-wrap gap-3 justify-center mt-4">
+                  {[
+                    'Dark psychological thriller with a twist',
+                    'Slice of life, heartwarming, school setting',
+                    'Sci-fi mecha with tactical battles'
+                  ].map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => { setSearchQuery(p); handleSearch(p); }}
+                      className="text-sm px-3 py-2 rounded-full bg-glass border border-border-subtle text-text-muted hover:bg-bg-card-hover transition"
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+              </div>
           </div>
       </div>
 

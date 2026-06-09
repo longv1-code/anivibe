@@ -8,11 +8,11 @@ const Searchbar = ({ onSearch, query, setQuery }) => {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && onSearch(query)}
             placeholder="e.g. dark thriller with a genius protagonist..."
-            className="flex-1 bg-bg-card border border-border-subtle rounded-l-full px-6 py-4 text-text-primary placeholder-text-muted focus:outline-none focus:border-accent-blue transition-colors font-body text-sm"
+        className="flex-1 bg-bg-card border border-border-subtle rounded-l-full px-6 py-4 text-text-primary placeholder-text-muted focus:outline-none focus:border-accent-blue transition-colors font-body text-sm search-input"
         />
         <Button
             onClick={() => onSearch(query)} // calls parent's function with the query
-            className="bg-accent-blue text-bg-primary font-display font-semibold px-8 py-4 rounded-r-full hover:opacity-90 transition-opacity whitespace-nowrap"
+        className="bg-accent-blue text-bg-primary font-display font-semibold px-8 py-4 rounded-r-full hover:opacity-90 transition-opacity whitespace-nowrap search-btn"
         >
             Search
         </Button>

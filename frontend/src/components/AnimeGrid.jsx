@@ -2,7 +2,7 @@ import AnimeCard from "./AnimeCard"
 
 const AnimeGrid = ({ results, user, favorites, onFavoriteChange }) => {
     return (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {results.map((anime) => (
                 // uses ... spread operator unpacks every field of the object as individual props, 
                 // results args matches exactly with AnimeCard args

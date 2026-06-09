@@ -5,14 +5,15 @@
 @tailwind utilities;
 
 :root {
-    --bg-primary: #0d1117;
-    --bg-card: #161b22;
-    --bg-card-hover: #1c2333;
+    --bg-primary: #071024;
+    --bg-card: #0f1722;
+    --bg-card-hover: #17202a;
     --accent-blue: #58a6ff;
     --accent-coral: #f78166;
     --text-primary: #e6edf3;
-    --text-muted: #8b949e;
-    --border: #30363d;
+    --text-muted: #9aa4b2;
+    --border: #24303a;
+    --glass: rgba(255,255,255,0.03);
 }
 
 body {
@@ -20,4 +21,46 @@ body {
     color: var(--text-primary);
     font-family: 'DM Sans', sans-serif;
     min-height: 100vh;
+}
+
+/* Subtle utility for hero gradient */
+.hero-gradient {
+    background: linear-gradient(90deg, rgba(13,17,23,0.6), rgba(7,16,36,0.85));
+}
+
+/* Hero background polish: layered blurred base + overlay vignette */
+.hero-bg {
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    position: absolute;
+    inset: 0;
+    transform: scale(1.06);
+    filter: blur(3px) brightness(0.55) saturate(0.95);
+    transition: transform 0.6s ease, filter 0.6s ease;
+    will-change: transform;
+}
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0.6) 55%, rgba(0,0,0,0.85) 100%);
+    mix-blend-mode: normal;
+}
+
+/* Content container sits above background */
+.hero-content { position: relative; z-index: 10; }
+
+/* Searchbar small polish */
+.search-input {
+    box-shadow: 0 6px 24px rgba(2,6,23,0.6);
+    border: 1px solid rgba(255,255,255,0.04);
+}
+.search-btn {
+    box-shadow: 0 8px 30px rgba(88,166,255,0.06);
+}
+
+/* Slightly emphasize CTA and sample prompt buttons */
+.sample-prompt {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.03);
 }

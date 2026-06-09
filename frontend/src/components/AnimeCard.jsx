@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 
 const AnimeCard = ({ title, score, mal_url, type, episodes, status, genres, image, synopsis, studios, user, isFavorite, onFavoriteChange }) => {
     const [favorited, setFavorited] = useState(isFavorite)
+    const [popping, setPopping] = useState(false)
     const navigate = useNavigate()
 
     const handleFavorite = async (e) => {
@@ -34,12 +35,15 @@ const AnimeCard = ({ title, score, mal_url, type, episodes, status, genres, imag
                 status
             })
             setFavorited(true)
+            // trigger pop animation
+            setPopping(true)
+            setTimeout(() => setPopping(false), 420)
             onFavoriteChange?.(mal_url, true)
         }
     }
 
     return (
-        <a href={mal_url} target="_blank" rel="noreferrer" className={styles.card}>
+        <a href={mal_url} target="_blank" rel="noreferrer" className={styles.card} aria-label={`Open ${title} on MyAnimeList`}>
             {/* Image with title overlay */}
             <div className={styles.imageWrapper}>
                 <img src={image} alt={title} className={styles.image} />
@@ -61,15 +65,13 @@ const AnimeCard = ({ title, score, mal_url, type, episodes, status, genres, imag
                     </div>
                     <IconButton
                         onClick={handleFavorite}
-                        sx={{ 
-                            color: favorited ? '#f78166' : 'var(--text-muted)',
-                            '&:hover': { color: '#f78166' },
-                            padding: '4px'
-                        }}
+                        aria-label={favorited ? 'Remove favorite' : 'Add favorite'}
+                        sx={{ padding: '4px' }}
                     >
                         <Heart 
                             size={18}
-                            fill={favorited ? '#f78166' : 'none'}
+                            className={`${favorited ? styles.heartFilled : styles.heart} ${popping ? styles.heartPop : ''}`}
+                            fill={favorited ? 'currentColor' : 'none'}
                             stroke="currentColor"
                         />
                     </IconButton>
