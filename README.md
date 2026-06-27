@@ -2,6 +2,8 @@
 
 A fullstack anime recommender that lets users query a **20,000+ record dataset** using natural language. Powered by Google Gemini for NL-to-SQL translation, Jikan API for live anime data, and a custom reranking pipeline for relevance scoring.
 
+Live Demo: [anivibe-neon.vercel.app](https://anivibe-neon.vercel.app)
+
 > "What are some dark psychological anime from the 2010s with a strong female lead?" — AniVibe understands that.
 
 ---
