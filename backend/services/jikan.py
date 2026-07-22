@@ -98,5 +98,8 @@ async def search_anime(query: str = None, genres: list = None, min_score: float 
 
     except httpx.RequestError:
         raise Exception("Could not connect to Jikan API")
-    except httpx.HTTPStatusError:
-        raise Exception("Jikan API returned an error")
+    except httpx.HTTPStatusError as e:
+        print("Status:", e.response.status_code)
+        print("URL:", e.request.url)
+        print("Response:", e.response.text)
+        raise
